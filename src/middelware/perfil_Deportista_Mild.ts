@@ -27,22 +27,7 @@ export const validar_Perfil_Deportista_Body = async (
   res: Response,
   next: NextFunction
 ) => {
-  await body('ID_Deportista')
-    .notEmpty().withMessage('El ID del deportista es obligatorio')
-    .isInt({ gt: 0 }).withMessage('El ID del deportista debe ser un número entero válido')
-    .custom(async (value, { req }) => {
-      const deportista_Existente = await Deportista.findByPk(value);
-      if (!deportista_Existente) {
-        throw new Error('No existe un deportista con ese ID');}
-
-      if (req.method === 'POST') {
-        const perfil_Deportista_Existente = await Perfil_Deportista.findOne({ where: { ID_Deportista: value } });
-        if (perfil_Deportista_Existente) {
-          throw new Error('Este deportista ya tiene un perfil creado');
-        }}
-      return true;
-    })
-    .run(req);
+  
 
   await body('foto_Perfil')
     .optional()

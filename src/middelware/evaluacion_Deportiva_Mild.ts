@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { body, param, validationResult } from "express-validator";
 import Evaluacion_Deportiva from "../models/evaluacion_Deportiva";
 
+
 export const validar_Evaluacion_Deportiva_Existente = async ( req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 

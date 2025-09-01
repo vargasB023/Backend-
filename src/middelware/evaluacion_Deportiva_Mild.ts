@@ -2,20 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { body, param, validationResult } from "express-validator";
 import Evaluacion_Deportiva from "../models/evaluacion_Deportiva";
 
-export const validar_EvaluacionDeportiva_Por_Id = async ( req: Request, res: Response, next: NextFunction) => {
-  await param('id')
-    .isInt({ gt: 0 })
-    .withMessage('El ID debe ser un número entero mayor que 0')
-    .run(req);
-
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  next();
-};
-
 export const validar_Evaluacion_Deportiva_Existente = async ( req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 

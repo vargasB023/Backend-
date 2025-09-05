@@ -3,6 +3,7 @@ import Perfil_Deportista from "../models/perfil_Deportista"
 import Equipo from "../models/equipo"
 import cloudinary from "../Config/cloudinary"
 import fs from "fs-extra";
+import Deportista from "../models/deportista";
 
 export class perfil_Deportista_Controller{
   
@@ -30,7 +31,10 @@ export class perfil_Deportista_Controller{
       const error = new Error('El perfil del deportista no encontrado')
       return res.status(404).json({ error: error.message })
     }
-    res.json(perfil_Deportista)
+    
+    const deportista = await Deportista.findByPk(perfil_Deportista.ID_Deportista)
+
+    res.json({perfil_Deportista, deportista})
   } catch (error) {
     res.status(500).json({ error: 'Hubo un error al traer el perfil del deportista' })
   }
@@ -95,6 +99,7 @@ export class perfil_Deportista_Controller{
         const error = new Error('deportista no encontrado')
         return res.status(404).json({ error: error.message })
       }
+
       //escribir los cambios del body
       await perfil_Deportista.destroy()
       res.json('El  perfil del deportista se ha eliminado correctamente')

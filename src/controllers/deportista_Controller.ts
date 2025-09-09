@@ -3,6 +3,8 @@ import Deportista from "../models/deportista";
 import Equipo from "../models/equipo";
 import Rel_Deportista_Equipo from "../models/rel_Deportista_Equipo";
 import Perfil_Deportista from "../models/perfil_Deportista";
+import h_Lesiones_Antes from "../models/h_Lesiones_Antes";
+import h_Lesiones_Despues from "../models/h_Lesiones_Despues";
 import { enviarCorreoBienvenida } from "../utils/enviarCorreo";
 
 export class Deportista_controller {
@@ -11,7 +13,7 @@ export class Deportista_controller {
       console.log("Desde get /api/deportista");
       const deportistas = await Deportista.findAll({
         order: [["createdAT", "ASC"]],
-        include: [{ model: Equipo }],
+        include: [{ model: Equipo}, {model:h_Lesiones_Antes},{model: h_Lesiones_Despues}],
       });
       res.json(deportistas);
     } catch (error) {

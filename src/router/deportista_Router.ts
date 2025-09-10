@@ -34,8 +34,6 @@ router.put('/:id',
     Deportista_controller.actualizar_Deportista_Por_Id
 );
 
-
-
 router.delete('/:id',
     param('id').isInt().withMessage('ID NO VALIDO')
         .custom(value => value > 0 ).withMessage('ID NO VALIDO'),

@@ -13,7 +13,7 @@ export class Deportista_controller {
       console.log("Desde get /api/deportista");
       const deportistas = await Deportista.findAll({
         order: [["createdAT", "ASC"]],
-        include: [{ model: Equipo}, {model:h_Lesiones_Antes},{model: h_Lesiones_Despues}],
+        include: [{ model: Equipo }],
       });
       res.json(deportistas);
     } catch (error) {
@@ -25,7 +25,11 @@ export class Deportista_controller {
   static traer_Deportista_Por_Id = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const deportista = await Deportista.findByPk(id, {});
+      const deportista = await Deportista.findByPk(id, {
+        attributes: ["ID_Deportista", "no_Documento"],
+        order: [["createdAT", "ASC"]],
+        include: [{ model: h_Lesiones_Antes }, {model: h_Lesiones_Despues}],
+      });
       if (!deportista) {
         const error = new Error("Deportista no encontrado");
 
@@ -37,6 +41,7 @@ export class Deportista_controller {
     }
   };
 
+ 
   static traer_Deportista_Por_Email = async (req: Request, res: Response) => {
     try {
       console.log(req.body);

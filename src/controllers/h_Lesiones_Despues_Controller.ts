@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import h_Lesiones_Despues from "../models/h_Lesiones_Despues";
+import Deportista from "../models/deportista";
 
 export class h_Lesiones_Despues_Controller {
   static validar_Registros_Lesiones_Despues = async (_: Request, res: Response) => {
     try {
-      const lesiones = await h_Lesiones_Despues.findAll();
+      const lesiones = await h_Lesiones_Despues.findAll({
+        include: [{ model: Deportista } ]
+      });
       res.json(lesiones);
     } catch (error) {
       res.status(500).json({ error: "Error al obtener lesiones posteriores" });

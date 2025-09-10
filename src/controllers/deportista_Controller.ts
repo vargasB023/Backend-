@@ -25,6 +25,21 @@ export class Deportista_controller {
   static traer_Deportista_Por_Id = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
+      const deportista = await Deportista.findByPk(id,);
+      if (!deportista) {
+        const error = new Error("Deportista no encontrado");
+
+        return res.status(404).json({ error: error.message });
+      }
+      res.json(deportista);
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error al traer el deportista" });
+    }
+  };
+
+   static traer_Deportista_Lesiones_Id = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
       const deportista = await Deportista.findByPk(id, {
         attributes: ["ID_Deportista", "no_Documento"],
         order: [["createdAT", "ASC"]],

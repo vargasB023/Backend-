@@ -18,6 +18,12 @@ router.get('/:id',
     Deportista_controller.traer_Deportista_Por_Id
 )
 
+router.get('/lesiones/:id',
+    validar_Deportista_Por_Id,
+    handleInputErrors,
+    Deportista_controller.traer_Deportista_Lesiones_Id
+)
+
 router.post('/',
     validar_Deportista_Existente,
     validar_Deportista_body,

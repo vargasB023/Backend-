@@ -22,10 +22,33 @@ export class Deportista_controller {
     }
   };
 
+  static traer_Deportistas_Lesiones = async (req: Request, res: Response) => {
+    try {
+      console.log("Desde get /api/deportista");
+      const deportistas = await Deportista.findAll({
+        order: [["createdAT", "ASC"]],
+        include: [
+          { model: Equipo },
+          { model: h_Lesiones_Antes },
+          { model: h_Lesiones_Despues },
+        ],
+      });
+      
+      
+
+      res.json(deportistas);
+    } catch (error) {
+      console.log(error);
+      res
+        .status(500)
+        .json({ error: "Hubo un error al traer los deportistas lesionados" });
+    }
+  };
+
   static traer_Deportista_Por_Id = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const deportista = await Deportista.findByPk(id,);
+      const deportista = await Deportista.findByPk(id);
       if (!deportista) {
         const error = new Error("Deportista no encontrado");
 
@@ -37,13 +60,13 @@ export class Deportista_controller {
     }
   };
 
-   static traer_Deportista_Lesiones_Id = async (req: Request, res: Response) => {
+  static traer_Deportista_Lesiones_Id = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const deportista = await Deportista.findByPk(id, {
         attributes: ["ID_Deportista", "no_Documento"],
         order: [["createdAT", "ASC"]],
-        include: [{ model: h_Lesiones_Antes }, {model: h_Lesiones_Despues}],
+        include: [{ model: h_Lesiones_Antes }, { model: h_Lesiones_Despues }],
       });
       if (!deportista) {
         const error = new Error("Deportista no encontrado");
@@ -56,7 +79,6 @@ export class Deportista_controller {
     }
   };
 
- 
   static traer_Deportista_Por_Email = async (req: Request, res: Response) => {
     try {
       console.log(req.body);
@@ -147,12 +169,10 @@ export class Deportista_controller {
       res.json("El deportista se ha actualizado correctamente");
     } catch (error) {
       //console.log(error)
-      res
-        .status(500)
-        .json({
-          error:
-            "Hubo un error al actualizar el estado del deportista en el equipo",
-        });
+      res.status(500).json({
+        error:
+          "Hubo un error al actualizar el estado del deportista en el equipo",
+      });
     }
   };
 

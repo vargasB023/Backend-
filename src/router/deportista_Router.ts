@@ -7,6 +7,7 @@ import { param } from "express-validator";
 const router = Router()
 
 router.get('/',Deportista_controller.traer_Deportistas)
+router.get('/lesionados', Deportista_controller.traer_Deportistas_Lesiones)
 
 router.post('/login',
     Deportista_controller.traer_Deportista_Por_Email
@@ -17,6 +18,7 @@ router.get('/:id',
     handleInputErrors,
     Deportista_controller.traer_Deportista_Por_Id
 )
+
 
 router.get('/lesiones/:id',
     validar_Deportista_Por_Id,

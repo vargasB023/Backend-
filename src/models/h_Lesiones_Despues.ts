@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, ForeignKey, HasMany } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, HasMany, BelongsTo } from 'sequelize-typescript';
 import Deportista from './deportista';
 import Entrenador from './entrenador';
 
@@ -45,6 +45,12 @@ class h_Lesiones_Despues extends Model {
   @ForeignKey(() => Entrenador)
   @Column({allowNull : false})
   declare ID_Entrenador: number;
+
+  @BelongsTo(() => Deportista)
+  declare deportista: Deportista;
+
+  @BelongsTo(() => Entrenador)
+  declare entrenador: Entrenador;
 }
 
 export default h_Lesiones_Despues;

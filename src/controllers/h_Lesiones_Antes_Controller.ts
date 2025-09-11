@@ -3,7 +3,7 @@ import h_Lesiones_Antes from "../models/h_Lesiones_Antes";
 import Deportista from "../models/deportista";
 
 export class h_Lesiones_Antes_Controller {
-  static validar_Registros_Lesiones_Antes = async (_: Request, res: Response) => {
+  static validar_Registros_Lesiones_Antes = async (req: Request, res: Response) => {
     try {
       const lesiones = await h_Lesiones_Antes.findAll({
       include: [{ model: Deportista } ]

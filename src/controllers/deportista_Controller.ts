@@ -22,28 +22,33 @@ export class Deportista_controller {
     }
   };
 
-  static traer_Deportistas_Lesiones = async (req: Request, res: Response) => {
-    try {
-      console.log("Desde get /api/deportista");
-      const deportistas = await Deportista.findAll({
-        order: [["createdAT", "ASC"]],
-        include: [
-          { model: Equipo },
-          { model: h_Lesiones_Antes },
-          { model: h_Lesiones_Despues },
-        ],
-      });
-      
-      
+static traer_Deportistas_Lesiones = async (req: Request, res: Response) => {
+  try {
+    console.log("Desde get /api/deportista/lesionados");
 
-      res.json(deportistas);
-    } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .json({ error: "Hubo un error al traer los deportistas lesionados" });
-    }
-  };
+    const deportistas = await Deportista.findAll({
+      include: [
+        { model: Equipo },
+        { model: h_Lesiones_Antes },
+        { model: h_Lesiones_Despues },
+      ],
+      order: [["createdAt", "ASC"]], // 👈 cuidado con la C y A en min/mayúscula
+    });
+
+    // Filtrar solo los que tengan al menos una lesión
+    const deportistasConLesion = deportistas.filter(d =>
+      (d.h_lesiones_antes?.length > 0) ||
+      (d.h_lesiones_despues?.length > 0)
+    );
+
+    res.json(deportistasConLesion);
+  } catch (error) {
+    console.error("Error en traer_Deportistas_Lesiones:", error);
+    res
+      .status(500)
+      .json({ error: "Hubo un error al traer los deportistas lesionados" });
+  }
+};
 
   static traer_Deportista_Por_Id = async (req: Request, res: Response) => {
     try {

@@ -10,7 +10,6 @@ export class Notificaciones_controller {
       res.status(500).json({ error: 'Error al obtener las notificaciones' });
     }
   }
-
   static traer_Notificacion_Por_Id = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;

@@ -25,7 +25,6 @@ router.post('/',
 
 router.put('/:id', 
     validar_Equipo_Por_Id, 
-    validar_Equipo_Body, 
     handleInputErrors, 
     Equipo_Controller.actualizar_Equipo_Por_Id);
 

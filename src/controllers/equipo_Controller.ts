@@ -116,7 +116,6 @@ static traer_equipoEntrenador_Por_Id = async (req: Request, res: Response) => {
   }
 };
 
-
   static agregarDeportista = async (req: Request, res: Response) => {
     try{
       const { id } = req.params
@@ -142,7 +141,6 @@ static traer_equipoEntrenador_Por_Id = async (req: Request, res: Response) => {
   }
 
 
-  //ELIMINAR
   static eliminar_Equipo_Por_Id = async (req: Request, res: Response) =>{
     try{
       const { id } = req.params

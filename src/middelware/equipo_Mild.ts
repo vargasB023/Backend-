@@ -29,6 +29,14 @@ export const validar_Equipo_Body = async (req: Request,res: Response,next: NextF
     .isIn(['INFANTIL', 'JUVENIL', 'MAYOR']).withMessage('Categoría no válida')
     .run(req);
 
+  await body('foto_Equipo')
+    .optional()
+    .isString().withMessage('La foto de perfil debe ser una cadena de texto')
+    .isLength({ max: 255 }).withMessage('La URL de la foto no debe superar los 255 caracteres')
+    .matches(/\.(jpg|jpeg|png|gif|webp)$/i)
+    .withMessage('La foto debe ser una imagen válida (jpg, jpeg, png, gif, webp)')
+    .run(req);
+
   await body('liga')
     .notEmpty().withMessage('La liga es obligatoria')
     .isIn(['MASCULINO', 'FEMENINO', 'MIXTO']).withMessage('Liga no válida')

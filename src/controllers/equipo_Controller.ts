@@ -67,7 +67,6 @@ static traer_equipoEntrenador_Por_Id = async (req: Request, res: Response) => {
     }
   }
 
-
   static actualizar_Equipo_Por_Id = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -77,8 +76,17 @@ static traer_equipoEntrenador_Por_Id = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Equipo no encontrado" });
     }
 
-    let dataToUpdate: any = { ...req.body };
+    // 🔹 Filtrar solo los campos que tu modelo realmente tiene
+    const camposPermitidos = ["nombre_Equipo", "categoria", "liga", "estado"]; 
+    let dataToUpdate: any = {};
 
+    for (const campo of camposPermitidos) {
+      if (req.body[campo] !== undefined) {
+        dataToUpdate[campo] = req.body[campo];
+      }
+    }
+
+    // 🔹 Manejo de imagen
     if (req.files && (req.files as any).foto_Equipo) {
       const file = (req.files as any).foto_Equipo;
 
@@ -90,31 +98,33 @@ static traer_equipoEntrenador_Por_Id = async (req: Request, res: Response) => {
 
         dataToUpdate.foto_Equipo = resultado.secure_url;
 
-        // borrar archivo temporal
-        await fs.unlink(file.tempFilePath);
+        await fs.unlink(file.tempFilePath); // borrar temporal
       } catch (error) {
         console.error("Error al subir imagen a Cloudinary:", error);
         return res.status(500).json({ mensaje: "Error al subir la imagen del equipo" });
       }
     }
 
+    // 🔹 Actualizar equipo con datos filtrados
     await equipo.update(dataToUpdate);
 
+    // 🔹 Actualizar relación con deportistas (si aplica)
     if (req.body.deportista) {
       await equipo.$set("deportista", req.body.deportista, {
         through: { fecha_Asignacion: new Date(), estado: "ACTIVO" },
       });
     }
 
-    res.json({
+    return res.json({
       mensaje: "El equipo se ha actualizado correctamente",
       equipo,
     });
   } catch (error) {
     console.error("Error en actualizar_Equipo_Por_Id:", error);
-    res.status(500).json({ error: "Hubo un error al actualizar el equipo" });
+    return res.status(500).json({ error: "Hubo un error al actualizar el equipo" });
   }
 };
+
 
   static agregarDeportista = async (req: Request, res: Response) => {
     try{

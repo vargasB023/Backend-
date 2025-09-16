@@ -67,68 +67,39 @@ export class Equipo_Controller {
       res.status(500).json({ error: "Hubo un error al crear el equipo" });
     }
   };
+  
   static actualizar_Equipo_Por_Id = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const equipo = await Equipo.findByPk(id);
+    if (!equipo) return res.status(404).json({ error: "Equipo no encontrado" });
 
-    if (!equipo) {
-      return res.status(404).json({ error: "Equipo no encontrado" });
+    const body = req.body || {};
+    const dataToUpdate = { ...body };
+    delete dataToUpdate.deportista;
+
+    if (req.files?.foto_Equipo) {
+      const file = req.files.foto_Equipo as any;
+      const resultado = await cloudinary.uploader.upload(file.tempFilePath, {
+        folder: "fotoEquipos",
+        resource_type: "image",
+      });
+      await fs.unlink(file.tempFilePath);
+      dataToUpdate.foto_Equipo = resultado.secure_url;
     }
 
-    // Construir los datos a actualizar
-    let dataToUpdate: any = {};
-    if (req.body && Object.keys(req.body).length > 0) {
-      dataToUpdate = { ...req.body };
-      delete dataToUpdate.deportista; // eliminamos deportista del update directo
-    }
+    if (Object.keys(dataToUpdate).length) await equipo.update(dataToUpdate);
 
-    // Subida de imagen si existe
-    if (req.files && (req.files as any).foto_Equipo) {
-      const file = (req.files as any).foto_Equipo;
-
-      try {
-        const resultado = await cloudinary.uploader.upload(file.tempFilePath, {
-          folder: "fotoEquipos",
-          resource_type: "image",
-        });
-        await fs.unlink(file.tempFilePath);
-
-        dataToUpdate.foto_Equipo = resultado.secure_url;
-      } catch (error) {
-        console.error("Error al subir imagen a Cloudinary:", error);
-        return res
-          .status(500)
-          .json({ mensaje: "Error al subir la imagen del equipo" });
-      }
-    }
-
-    // Actualizar datos del equipo
-    if (Object.keys(dataToUpdate).length > 0) {
-      await equipo.update(dataToUpdate);
-    }
-
-    // Actualizar relación con deportistas si vienen en el body
-    if (req.body.deportista && Array.isArray(req.body.deportista)) {
-      // Se asegura de que sea un array
-      await equipo.$set("deportista", req.body.deportista, {
+    if (Array.isArray(body.deportista)) {
+      await equipo.$set("deportista", body.deportista, {
         through: { fecha_Asignacion: new Date(), estado: "ACTIVO" },
       });
     }
 
-    const equipoActualizado = await Equipo.findByPk(id, {
-      include: ["deportista"], // Incluimos los deportistas actualizados
-    });
-
-    res.json({
-      mensaje: "Equipo actualizado correctamente",
-      equipo: equipoActualizado,
-    });
-  } catch (error) {
-    console.error("Error en actualizar_Equipo_Por_Id:", error);
-    res
-      .status(500)
-      .json({ error: "Hubo un error al actualizar el equipo" });
+    const equipoActualizado = await Equipo.findByPk(id, { include: ["deportista"] });
+    res.json({ mensaje: "Equipo actualizado correctamente", equipo: equipoActualizado });
+  } catch {
+    res.status(500).json({ error: "Hubo un error al actualizar el equipo" });
   }
 };
 

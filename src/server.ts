@@ -76,7 +76,7 @@ app.use('/api/h_lesiones_antes', h_Lesiones_Antes_Router)
 app.use('/api/h_lesiones_despues', h_Lesiones_Despues_Router)
 app.use('/api/plan_de_entrenamiento',plan_de_entrenamiento_Router)
 app.use('/api/evaluacion',evaluacion_Deportiva_Router)
-app.use('/api/evacluacion_Tecnica',evaluacion_Tecnica_Router)
+app.use('/api/evaluacion_Tecnica',evaluacion_Tecnica_Router)
 app.use('/api/evaluacion_Fisica',evaluacion_Fisica_Router)
 app.use('/api/cronograma',cronograma_Router)
 

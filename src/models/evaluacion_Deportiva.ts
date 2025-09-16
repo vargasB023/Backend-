@@ -5,7 +5,7 @@ import Evaluacion_Tecnica from './evaluacion_Tecnica';
 import Evaluacion_Fisica from './evaluacion_Fisica';
 
 
-@Table({ tableName: 'Evaluacion_deportiva', timestamps: true })
+@Table({ tableName: 'Evaluacion_Deportiva', timestamps: true })
 export class Evaluacion_Deportiva extends Model {
 
   @Column({ primaryKey: true, autoIncrement: true })

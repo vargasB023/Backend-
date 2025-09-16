@@ -15,6 +15,9 @@ export class Equipo extends Model<Equipo>{
   
   @Column({ type: DataType.ENUM('INFANTIL', 'JUVENIL', 'MAYOR'), allowNull: false })
   declare categoria: string;
+
+  @Column({ type: DataType.STRING(250), allowNull: true })
+  declare foto_Equipo?: string;
   
   @Column({ type: DataType.ENUM('MASCULINO', 'FEMENINO', 'MIXTO'), allowNull: false })
   declare liga: string;

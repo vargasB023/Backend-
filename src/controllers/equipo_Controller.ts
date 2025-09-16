@@ -67,8 +67,7 @@ export class Equipo_Controller {
       res.status(500).json({ error: "Hubo un error al crear el equipo" });
     }
   };
-
-static actualizar_Equipo_Por_Id = async (req: Request, res: Response) => {
+  static actualizar_Equipo_Por_Id = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const equipo = await Equipo.findByPk(id);
@@ -77,15 +76,14 @@ static actualizar_Equipo_Por_Id = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Equipo no encontrado" });
     }
 
-    // 👇 inicializa vacío para evitar que truene
+    // Construir los datos a actualizar
     let dataToUpdate: any = {};
-
-    // si vienen campos en req.body (JSON o campos de formData)
     if (req.body && Object.keys(req.body).length > 0) {
       dataToUpdate = { ...req.body };
+      delete dataToUpdate.deportista; // eliminamos deportista del update directo
     }
 
-    // si viene archivo foto_Equipo
+    // Subida de imagen si existe
     if (req.files && (req.files as any).foto_Equipo) {
       const file = (req.files as any).foto_Equipo;
 
@@ -105,21 +103,26 @@ static actualizar_Equipo_Por_Id = async (req: Request, res: Response) => {
       }
     }
 
-    // 👇 solo actualiza si hay algo en dataToUpdate
+    // Actualizar datos del equipo
     if (Object.keys(dataToUpdate).length > 0) {
       await equipo.update(dataToUpdate);
     }
 
-    // si viene deportista en el body (asignación)
-    if (req.body.deportista) {
+    // Actualizar relación con deportistas si vienen en el body
+    if (req.body.deportista && Array.isArray(req.body.deportista)) {
+      // Se asegura de que sea un array
       await equipo.$set("deportista", req.body.deportista, {
         through: { fecha_Asignacion: new Date(), estado: "ACTIVO" },
       });
     }
 
+    const equipoActualizado = await Equipo.findByPk(id, {
+      include: ["deportista"], // Incluimos los deportistas actualizados
+    });
+
     res.json({
       mensaje: "Equipo actualizado correctamente",
-      equipo,
+      equipo: equipoActualizado,
     });
   } catch (error) {
     console.error("Error en actualizar_Equipo_Por_Id:", error);
@@ -128,6 +131,7 @@ static actualizar_Equipo_Por_Id = async (req: Request, res: Response) => {
       .json({ error: "Hubo un error al actualizar el equipo" });
   }
 };
+
 
   static agregarDeportista = async (req: Request, res: Response) => {
     try {

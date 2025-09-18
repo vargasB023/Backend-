@@ -1,10 +1,6 @@
 import { Router } from 'express';
 import { microciclo_Controller } from '../controllers/microciclo_Controller';
-import { 
-  validar_Microciclos, 
-  validar_Microciclo_Por_Id, 
-  validar_Microciclo_Body 
-} from '../middelware/microciclo_mild';
+import { validar_Microciclos, validar_Microciclo_Por_Id, validar_Microciclo_Body } from '../middelware/microciclo_mild';
 import { handleInputErrors } from '../middelware/Validation';
 
 const router = Router();

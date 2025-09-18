@@ -1,14 +1,23 @@
-import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, HasOne, Model, Table } from "sequelize-typescript";
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  HasOne,
+  Model,
+  Table,
+} from "sequelize-typescript";
 import Perfil_Deportista from "./perfil_Deportista";
 import Entrenador from "./entrenador";
-import rel_Deportista_Entrenador from './rel_Deportista_Entrenador'
+import rel_Deportista_Entrenador from "./rel_Deportista_Entrenador";
 import h_Lesiones_Despues from "./h_Lesiones_Despues";
 import Equipo from "./equipo";
 import Rel_Deportista_Equipo from "./rel_Deportista_Equipo";
 import h_Lesiones_Antes from "./h_Lesiones_Antes";
 
-
-@Table({ tableName: 'Deportista', timestamps: true})
+@Table({ tableName: "Deportista", timestamps: true })
 export class Deportista extends Model<Deportista> {
   @Column({ primaryKey: true, autoIncrement: true })
   declare ID_Deportista: number;
@@ -22,7 +31,7 @@ export class Deportista extends Model<Deportista> {
   @Column({ type: DataType.DATEONLY, allowNull: false })
   declare fecha_Nacimiento: Date;
 
-  @Column({ type: DataType.ENUM('MASCULINO', 'FEMENINO'), allowNull: false })
+  @Column({ type: DataType.ENUM("MASCULINO", "FEMENINO"), allowNull: false })
   declare genero: string;
 
   @Column({ type: DataType.STRING(100), allowNull: false })
@@ -40,13 +49,26 @@ export class Deportista extends Model<Deportista> {
   @Column({ type: DataType.STRING(50), allowNull: false })
   declare eps: string;
 
-  @Column({ type: DataType.ENUM('CENTRAL', 'REMATADOR', 'LIBERO', 'ARMADOR', 'ZAGUERO DERECHO', 'ZAGUERO IZQUIERDO'), allowNull: false })
+  @Column({
+    type: DataType.ENUM(
+      "CENTRAL",
+      "REMATADOR",
+      "LIBERO",
+      "ARMADOR",
+      "ZAGUERO DERECHO",
+      "ZAGUERO IZQUIERDO"
+    ),
+    allowNull: false,
+  })
   declare posicion: string;
 
   @Column({ type: DataType.STRING(3), allowNull: false })
   declare dorsal: string;
 
-  @Column({ type: DataType.ENUM('B+', 'B-', 'A+', 'A-', 'AB+', 'AB-', 'O+', 'O-'), allowNull: false })
+  @Column({
+    type: DataType.ENUM("B+", "B-", "A+", "A-", "AB+", "AB-", "O+", "O-"),
+    allowNull: false,
+  })
   declare tipo_De_Sangre: string;
 
   @Column({ type: DataType.STRING(100), allowNull: false })
@@ -56,7 +78,9 @@ export class Deportista extends Model<Deportista> {
   declare nombre_Contacto: string;
 
   @Column({
-  type: DataType.ENUM('PADRE', 'MADRE', 'HERMANO', 'HERMANA', 'TUTOR LEGAL'),allowNull: false})
+    type: DataType.ENUM("PADRE", "MADRE", "HERMANO", "HERMANA", "TUTOR LEGAL"),
+    allowNull: false,
+  })
   declare parentesco_Contacto: string;
 
   @Column({ type: DataType.STRING(15), allowNull: false })
@@ -65,18 +89,17 @@ export class Deportista extends Model<Deportista> {
   @HasOne(() => Perfil_Deportista)
   declare perfil_Deportista: Perfil_Deportista[];
 
-  @HasMany(() =>h_Lesiones_Despues)
+  @HasMany(() => h_Lesiones_Despues)
   declare h_lesiones_despues: h_Lesiones_Despues[];
 
-  @HasMany(() =>h_Lesiones_Antes)
+  @HasMany(() => h_Lesiones_Antes)
   declare h_lesiones_antes: h_Lesiones_Antes[];
 
-  @BelongsToMany (()=> Entrenador, ()=> rel_Deportista_Entrenador)
-  declare entrenador : Entrenador[];
+  @BelongsToMany(() => Entrenador, () => rel_Deportista_Entrenador)
+  declare entrenador: Entrenador[];
 
-  @BelongsToMany (()=> Equipo, ()=> Rel_Deportista_Equipo)
-  declare equipo : Equipo[];
-
+  @BelongsToMany(() => Equipo, () => Rel_Deportista_Equipo)
+  declare equipo: Equipo[];
 }
 
 export default Deportista;

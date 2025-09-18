@@ -6,6 +6,7 @@ import Perfil_Deportista from "../models/perfil_Deportista";
 import h_Lesiones_Antes from "../models/h_Lesiones_Antes";
 import h_Lesiones_Despues from "../models/h_Lesiones_Despues";
 import { enviarCorreoBienvenida } from "../utils/enviarCorreo";
+import bcrypt from "bcryptjs";
 
 export class Deportista_controller {
   static traer_Deportistas = async (req: Request, res: Response) => {
@@ -22,33 +23,33 @@ export class Deportista_controller {
     }
   };
 
-static traer_Deportistas_Lesiones = async (req: Request, res: Response) => {
-  try {
-    console.log("Desde get /api/deportista/lesionados");
+  static traer_Deportistas_Lesiones = async (req: Request, res: Response) => {
+    try {
+      console.log("Desde get /api/deportista/lesionados");
 
-    const deportistas = await Deportista.findAll({
-      include: [
-        { model: Equipo },
-        { model: h_Lesiones_Antes },
-        { model: h_Lesiones_Despues },
-      ],
-      order: [["createdAt", "ASC"]], // 👈 cuidado con la C y A en min/mayúscula
-    });
+      const deportistas = await Deportista.findAll({
+        include: [
+          { model: Equipo },
+          { model: h_Lesiones_Antes },
+          { model: h_Lesiones_Despues },
+        ],
+        order: [["createdAt", "ASC"]], // 👈 cuidado con la C y A en min/mayúscula
+      });
 
-    // Filtrar solo los que tengan al menos una lesión
-    const deportistasConLesion = deportistas.filter(d =>
-      (d.h_lesiones_antes?.length > 0) ||
-      (d.h_lesiones_despues?.length > 0)
-    );
+      // Filtrar solo los que tengan al menos una lesión
+      const deportistasConLesion = deportistas.filter(
+        (d) =>
+          d.h_lesiones_antes?.length > 0 || d.h_lesiones_despues?.length > 0
+      );
 
-    res.json(deportistasConLesion);
-  } catch (error) {
-    console.error("Error en traer_Deportistas_Lesiones:", error);
-    res
-      .status(500)
-      .json({ error: "Hubo un error al traer los deportistas lesionados" });
-  }
-};
+      res.json(deportistasConLesion);
+    } catch (error) {
+      console.error("Error en traer_Deportistas_Lesiones:", error);
+      res
+        .status(500)
+        .json({ error: "Hubo un error al traer los deportistas lesionados" });
+    }
+  };
 
   static traer_Deportista_Por_Id = async (req: Request, res: Response) => {
     try {
@@ -98,7 +99,12 @@ static traer_Deportistas_Lesiones = async (req: Request, res: Response) => {
         return res.status(404).json({ error: error.message });
       }
 
-      if (deportistas.contrasena !== Contrasena) {
+      const validPassword = await bcrypt.compare(
+        Contrasena,
+        deportistas.contrasena
+      );
+
+      if (!validPassword) {
         const error = new Error("El Correo o contraseña es incorrecto");
         return res.status(401).json({ error: error.message });
       }
@@ -113,6 +119,12 @@ static traer_Deportistas_Lesiones = async (req: Request, res: Response) => {
 
   static crear_Deportista = async (req: Request, res: Response) => {
     try {
+      if (req.body.contrasena) {
+        req.body.contrasena = await bcrypt.hash(req.body.contrasena, 10);
+      } else if (req.body.Contrasena) {
+        req.body.contrasena = await bcrypt.hash(req.body.Contrasena, 10);
+        delete req.body.Contrasena; // elimina la propiedad incorrecta
+      }
       const deportistas = new Deportista(req.body);
       const datosDeportista = await deportistas.save();
 

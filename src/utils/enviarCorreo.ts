@@ -22,54 +22,80 @@ export const enviarCorreoBienvenida = async (
     if (tipo === 'deportista') {
       asunto = '¡Bienvenido a GADDER, deportista!';
       mensajeHTML = `
-        <div style="font-family: 'Segoe UI', sans-serif; padding: 20px; background-color: #f0f4f8; color: #222;">
-          <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <h2 style="color: #3b82f6;">🏐 ¡Bienvenido a GADDER, ${nombre}!</h2>
-            <p>Gracias por registrarte en nuestra plataforma especializada en <strong>voleibol</strong>.</p>
-
-            <p>Con GADDER podrás:</p>
-            <ul>
-              <li>📊 Llevar el control de tus entrenamientos</li>
-              <li>📅 Visualizar sesiones y objetivos</li>
-              <li>📈 Hacer seguimiento a tu progreso deportivo</li>
-              <li>💬 Estar conectado con tu entrenador</li>
-            </ul>
-
-            <p>¡Comienza tu camino hacia la excelencia deportiva!</p>
-
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="https://gadder" style="background-color: #3b82f6; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: bold;">Ingresar a GADDER</a>
+        <div style="font-family: 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc; padding: 30px; color: #1e293b;">
+          <div style="max-width: 650px; margin: auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.08);">
+            
+            <div style="background: linear-gradient(135deg, #3b82f6, #1a6f9d); padding: 25px; text-align: center; color: #fff;">
+              <h1 style="margin: 0; font-size: 24px;">🏐 ¡Bienvenido, ${nombre}!</h1>
             </div>
 
-            <p style="font-size: 14px; color: #555;">Nos emociona ser parte de tu crecimiento como deportista.</p>
-            <p style="font-size: 14px; color: #999;">Equipo GADDER 🏐</p>
+            <div style="padding: 30px;">
+              <p style="font-size: 16px; line-height: 1.6;">
+                Gracias por registrarte en <strong>GADDER</strong>, la plataforma especializada en voleibol.
+              </p>
+
+              <p style="margin: 20px 0 10px; font-weight: bold;">Con GADDER podrás:</p>
+              <ul style="padding-left: 20px; margin: 0 0 20px; line-height: 1.6;">
+                <li>📊 Controlar tus entrenamientos</li>
+                <li>📅 Visualizar sesiones y objetivos</li>
+                <li>📈 Hacer seguimiento a tu progreso</li>
+                <li>💬 Mantenerte conectado con tu entrenador</li>
+              </ul>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="https://gadder" 
+                   style="display: inline-block; background: #3b82f6; padding: 14px 28px; color: #fff; border-radius: 10px; font-weight: 600; text-decoration: none; transition: background 0.3s;">
+                   Ingresar a GADDER
+                </a>
+              </div>
+
+              <p style="font-size: 14px; color: #64748b; text-align: center;">
+                Nos emociona ser parte de tu crecimiento como deportista.
+              </p>
+              <p style="font-size: 14px; color: #94a3b8; text-align: center; margin-top: 10px;">
+                Equipo GADDER 🏐
+              </p>
+            </div>
           </div>
         </div>
       `;
     } else if (tipo === 'entrenador') {
       asunto = '¡Bienvenido a GADDER, entrenador!';
       mensajeHTML = `
-        <div style="font-family: 'Segoe UI', sans-serif; padding: 20px; background-color: #f0f4f8; color: #222;">
-          <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <h2 style="color: #3b82f6;">🏐 ¡Bienvenido a GADDER, ${nombre}!</h2>
-            <p>Es un honor contar con tu experiencia y liderazgo en nuestra plataforma especializada en <strong>voleibol</strong>.</p>
-
-            <p>Con GADDER podrás:</p>
-            <ul>
-              <li>📝 Crear y gestionar planes de entrenamiento personalizados</li>
-              <li>📈 Hacer seguimiento al progreso de tus deportistas</li>
-              <li>📋 Organizar microciclos, sesiones y ejercicios fácilmente</li>
-              <li>📨 Comunicarte con tu equipo de forma clara y eficiente</li>
-            </ul>
-
-            <p>Estás a un paso de optimizar tu labor como entrenador. Haz clic en el botón para comenzar:</p>
-
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="https://gadder" style="background-color: #10b981; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: bold;">Ingresar a GADDER</a>
+        <div style="font-family: 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc; padding: 30px; color: #1e293b;">
+          <div style="max-width: 650px; margin: auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.08);">
+            
+            <div style="background: linear-gradient(135deg, #1a6f9d, #185a90); padding: 25px; text-align: center; color: #fff;">
+              <h1 style="margin: 0; font-size: 24px;">🏐 ¡Bienvenido, ${nombre}!</h1>
             </div>
 
-            <p style="font-size: 14px; color: #555;">Gracias por unirte a nosotros. Juntos llevaremos el voleibol al siguiente nivel.</p>
-            <p style="font-size: 14px; color: #999;">Equipo GADDER 🏐</p>
+            <div style="padding: 30px;">
+              <p style="font-size: 16px; line-height: 1.6;">
+                Es un honor contar con tu experiencia en <strong>GADDER</strong>, la plataforma especializada en voleibol.
+              </p>
+
+              <p style="margin: 20px 0 10px; font-weight: bold;">Con GADDER podrás:</p>
+              <ul style="padding-left: 20px; margin: 0 0 20px; line-height: 1.6;">
+                <li>📝 Crear y gestionar planes personalizados</li>
+                <li>📈 Monitorear el progreso de tus deportistas</li>
+                <li>📋 Organizar microciclos y sesiones</li>
+                <li>📨 Comunicarte con tu equipo eficientemente</li>
+              </ul>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="https://gadder" 
+                   style="display: inline-block; background: #1a6f9d; padding: 14px 28px; color: #fff; border-radius: 10px; font-weight: 600; text-decoration: none; transition: background 0.3s;">
+                   Ingresar a GADDER
+                </a>
+              </div>
+
+              <p style="font-size: 14px; color: #64748b; text-align: center;">
+                Gracias por unirte a nosotros. Juntos llevaremos el voleibol al siguiente nivel.
+              </p>
+              <p style="font-size: 14px; color: #94a3b8; text-align: center; margin-top: 10px;">
+                Equipo GADDER 🏐
+              </p>
+            </div>
           </div>
         </div>
       `;
@@ -87,4 +113,3 @@ export const enviarCorreoBienvenida = async (
     console.error('Error al enviar el correo:', error);
   }
 };
-

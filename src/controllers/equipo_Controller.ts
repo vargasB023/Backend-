@@ -4,6 +4,7 @@ import Deportista from "../models/deportista";
 import cloudinary from "../Config/cloudinary";
 import fs from "fs-extra";
 import fileUpload from "express-fileupload";
+import Cronograma from "../models/Cronograma";
 
 export class Equipo_Controller {
   static traer_Equipos = async (req: Request, res: Response) => {
@@ -23,7 +24,7 @@ export class Equipo_Controller {
     try {
       const { id } = req.params;
       const equipo = await Equipo.findByPk(id, {
-        include: [{ model: Deportista }],
+        include: [{ model: Deportista },{model:Cronograma}],
       });
       if (!equipo) {
         const error = new Error("Equipo no encontrado");
@@ -35,10 +36,7 @@ export class Equipo_Controller {
     }
   };
 
-  static traer_equipoEntrenador_Por_Id = async (
-    req: Request,
-    res: Response
-  ) => {
+  static traer_equipoEntrenador_Por_Id = async (req: Request,res: Response) => {
     try {
       const { ID_Entrenador } = req.params;
       const equipo = await Equipo.findAll({

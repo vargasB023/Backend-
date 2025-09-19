@@ -17,6 +17,18 @@ router.get(
   Cronograma_Controller.traer_Cronograma_Por_Id
 );
 
+router.get(
+  "/entrenador/:ID_Entrenador",
+  handleInputErrors,
+  Cronograma_Controller.traer_cronogramaEntrenador_Por_Id
+);
+
+router.get(
+  "/equipo/:id",
+  handleInputErrors,
+  Cronograma_Controller.traer_Cronogramas_Por_Equipo
+);
+
 router.post(
   "/",
   validar_Cronograma_body,

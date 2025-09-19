@@ -54,7 +54,9 @@ export class Deportista_controller {
   static traer_Deportista_Por_Id = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const deportista = await Deportista.findByPk(id);
+      const deportista = await Deportista.findByPk(id,{
+        include: [{ model: Equipo }]
+      });
       if (!deportista) {
         const error = new Error("Deportista no encontrado");
 

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Cronograma from "../models/Cronograma";
 import Equipo from "../models/equipo";
 import { Op } from "sequelize";
+import Deportista from "../models/deportista";
 
 export class Cronograma_Controller {
   static traer_Cronogramas = async (req: Request, res: Response) => {
@@ -37,7 +38,41 @@ export class Cronograma_Controller {
     }
   };
 
-  
+  static traer_Cronogramas_Por_Equipo = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const cronogramas = await Cronograma.findAll({
+      where: {
+        ID_Equipo: id,
+        fecha: { [Op.gte]: hoy },
+      },
+      order: [["fecha", "ASC"]],
+      include: [{ model: Equipo }],
+    });
+
+    if (!cronogramas.length) {
+      return res.status(404).json({ error: "No se encontraron cronogramas para este equipo" });
+    }
+
+    const respuesta = cronogramas.map((c) => {
+      const datos = {
+        ...c.toJSON(),
+        nombre_Equipo: c.equipo?.nombre_Equipo,
+        categoria: c.equipo?.categoria,
+      };
+      delete datos.equipo;
+      return datos;
+    });
+
+    res.json(respuesta);
+  } catch (error) {
+    res.status(500).json({ error: "Hubo un error al traer los cronogramas" });
+  }
+};
+
 
   static traer_Cronograma_Por_Id = async (req: Request, res: Response) => {
     try {
@@ -52,6 +87,31 @@ export class Cronograma_Controller {
       res.status(500).json({ error: "Hubo un error al traer el cronograma" });
     }
   };
+
+  static traer_cronogramaEntrenador_Por_Id = async (req: Request, res: Response) => {
+  try {
+    const { ID_Entrenador } = req.params;
+
+    const cronogramas = await Cronograma.findAll({
+      where: { ID_Entrenador },
+      include: [
+        {
+          model: Equipo, // si un cronograma está asociado a un equipo
+          include: [{ model: Deportista}], // si quieres también traer los deportistas de ese equipo
+        },
+      ],
+    });
+
+    if (!cronogramas || cronogramas.length === 0) {
+      return res.status(404).json({ error: "No se encontraron cronogramas para este entrenador" });
+    }
+
+    res.json(cronogramas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Hubo un error al traer los cronogramas" });
+  }
+};
   
 
   static crear_Cronograma = async (req: Request, res: Response) => {

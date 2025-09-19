@@ -31,13 +31,26 @@ router.post("/forgot-password", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
     const token = jwt.sign({ userId, rol }, JWT_SECRET, { expiresIn: "1h" });
 
-    
-    const resetUrl = `${process.env.FRONTEND_URL}/restablecerContraseña/${token}`;
+    // 🔹 Generar ambos enlaces
+    const resetUrlWeb = `${process.env.FRONTEND_URL}/restablecerContraseña/${token}`;
+    const resetUrlApp = `${process.env.APP_DEEPLINK}/${token}`;
 
-
-    await enviarCorreoRecuperacion(user.email, resetUrl);
+    // 🔹 Enviar correo con ambos enlaces
+    await enviarCorreoRecuperacion(
+      user.email,
+      `
+      <p>Hola,</p>
+      <p>Solicitaste restablecer tu contraseña. Tienes dos opciones:</p>
+      <ul>
+        <li><a href="${resetUrlWeb}">👉 Restablecer desde la web</a></li>
+        <li><a href="${resetUrlApp}">👉 Restablecer desde la app móvil</a></li>
+      </ul>
+      <p>Este enlace es válido por 1 hora.</p>
+      `
+    );
 
     return res.json({ message: "Correo enviado para restablecer contraseña" });
   } catch (error) {
@@ -45,6 +58,7 @@ router.post("/forgot-password", async (req, res) => {
     return res.status(500).json({ message: "Error en el servidor" });
   }
 });
+
 router.post("/reset-password", async (req, res) => {
   try {
     const { token, password } = req.body;

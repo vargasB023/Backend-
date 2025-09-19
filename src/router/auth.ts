@@ -35,9 +35,10 @@ router.post("/forgot-password", async (req, res) => {
     // 🔹 Generar token con vencimiento de 1h
     const token = jwt.sign({ userId, rol }, JWT_SECRET, { expiresIn: "1h" });
 
-    // 🔹 Generar ambos enlaces
-    const resetUrlWeb = `${process.env.FRONTEND_URL}/restablecerContraseña/${token}`;
-    const resetUrlApp = `${process.env.APP_DEEPLINK}/${token}`;
+    // Generar ambos enlaces con el token
+const resetUrlWeb = `${process.env.FRONTEND_URL}/restablecerContraseña/${token}`;
+const resetUrlApp = `https://backend-1s10.onrender.com/reset-password/${token}`;
+
 
     // 🔹 Usar la función que ya envía un correo bonito con botones
     await enviarCorreoRecuperacion(user.email, resetUrlWeb, resetUrlApp);

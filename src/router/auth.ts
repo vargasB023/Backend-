@@ -31,15 +31,12 @@ router.post("/forgot-password", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
-
-    // 🔑 Generar token con id + rol
     const token = jwt.sign({ userId, rol }, JWT_SECRET, { expiresIn: "1h" });
 
-    // 🔗 Crear link de restablecimiento (ahora en español)
+    
     const resetUrl = `${process.env.FRONTEND_URL}/restablecerContraseña/${token}`;
 
 
-    // 📧 Enviar correo real con nodemailer
     await enviarCorreoRecuperacion(user.email, resetUrl);
 
     return res.json({ message: "Correo enviado para restablecer contraseña" });
@@ -56,7 +53,6 @@ router.post("/reset-password", async (req, res) => {
       return res.status(400).json({ message: "Datos incompletos" });
     }
 
-    // 🔑 Verificar token
     let decoded: any;
     try {
       decoded = jwt.verify(token, JWT_SECRET);
@@ -65,11 +61,8 @@ router.post("/reset-password", async (req, res) => {
     }
 
     const { userId, rol } = decoded;
-
-    // 🔒 Hashear nueva contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 📝 Actualizar según rol
     if (rol === "entrenador") {
       await Entrenador.update(
         { contrasena: hashedPassword },

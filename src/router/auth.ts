@@ -1,29 +1,29 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import crypto from "crypto";
+import moment from "moment-timezone";
+import bcrypt from "bcryptjs";
+import { enviarCorreoRecuperacion } from "../utils/enviarCorreoRecuperacion";
 import Entrenador from "../models/entrenador";
 import Deportista from "../models/deportista";
-import { enviarCorreoRecuperacion } from "../utils/enviarCorreoRecuperacion"; 
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "super_secreto";
 
+// 📩 Solicitar OTP
 router.post("/forgot-password", async (req, res) => {
   try {
+    console.log("Entré en /forgot-password");
     const { email, rol } = req.body;
+    console.log("Email y rol recibidos:", email, rol);
+
     if (!email || !rol) {
       return res.status(400).json({ message: "Email y rol son obligatorios" });
     }
 
     let user: any;
-    let userId: number;
-
     if (rol === "entrenador") {
       user = await Entrenador.findOne({ where: { email } });
-      userId = user?.ID_Entrenador;
     } else if (rol === "deportista") {
       user = await Deportista.findOne({ where: { email } });
-      userId = user?.ID_Deportista;
     } else {
       return res.status(400).json({ message: "Rol inválido" });
     }
@@ -32,56 +32,75 @@ router.post("/forgot-password", async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // 🔹 Generar token con vencimiento de 1h
-    const token = jwt.sign({ userId, rol }, JWT_SECRET, { expiresIn: "1h" });
+    // 🔑 Generar OTP de 6 dígitos
+    const otp = crypto.randomInt(100000, 999999).toString();
 
-    // Generar ambos enlaces con el token
-const resetUrlWeb = `${process.env.FRONTEND_URL}/restablecerContraseña/${token}`;
-const resetUrlApp = `https://backend-1s10.onrender.com/reset-password/${token}`;
+    // 📅 Expira en 15 minutos (zona Bogotá)
+    const nowBogota = moment().tz("America/Bogota");
+    const otpExpiry = nowBogota.clone().add(15, "minutes").toDate();
 
+    // Guardar en el usuario
+    user.resetCode = otp;
+    user.resetCodeExpires = otpExpiry;
 
-    // 🔹 Usar la función que ya envía un correo bonito con botones
-    await enviarCorreoRecuperacion(user.email, resetUrlWeb, resetUrlApp);
+    console.log("OTP a guardar:", otp, "Expira en:", otpExpiry);
 
-    return res.json({ message: "Correo enviado para restablecer contraseña" });
+    await user.save();
+
+    // 📧 Enviar correo con OTP
+    await enviarCorreoRecuperacion(user.email, otp);
+
+    return res.json({
+      message: "Se envió un código de verificación a tu correo",
+    });
   } catch (error) {
-    console.error("Error en /forgot-password:", error);
+    console.error("Error en forgot-password:", error);
     return res.status(500).json({ message: "Error en el servidor" });
   }
 });
 
-
+// 🔒 Restablecer contraseña
 router.post("/reset-password", async (req, res) => {
   try {
-    const { token, password } = req.body;
+    const { email, rol, otp, nuevaContrasena } = req.body;
 
-    if (!token || !password) {
+    if (!email || !rol || !otp || !nuevaContrasena) {
       return res.status(400).json({ message: "Datos incompletos" });
     }
 
-    let decoded: any;
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-      return res.status(400).json({ message: "Token inválido o expirado" });
-    }
-
-    const { userId, rol } = decoded;
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    let user: any;
     if (rol === "entrenador") {
-      await Entrenador.update(
-        { contrasena: hashedPassword },
-        { where: { ID_Entrenador: userId } }
-      );
+      user = await Entrenador.findOne({ where: { email } });
     } else if (rol === "deportista") {
-      await Deportista.update(
-        { contrasena: hashedPassword },
-        { where: { ID_Deportista: userId } }
-      );
+      user = await Deportista.findOne({ where: { email } });
     } else {
       return res.status(400).json({ message: "Rol inválido" });
     }
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // 🔑 Validar OTP
+    if (String(user.resetCode) !== String(otp)) {
+      return res.status(400).json({ message: "Código inválido" });
+    }
+
+    // 📅 Validar expiración
+    const nowBogota = moment().tz("America/Bogota");
+    if (nowBogota.toDate() > new Date(user.resetCodeExpires)) {
+      return res.status(400).json({ message: "Código expirado" });
+    }
+
+    // 🔒 Hashear contraseña nueva
+    const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+    user.contrasena = hashedPassword;
+
+    // ✨ Limpiar OTP
+    user.resetCode = null;
+    user.resetCodeExpires = null;
+
+    await user.save();
 
     return res.json({ message: "Contraseña restablecida con éxito" });
   } catch (error) {

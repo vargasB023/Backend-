@@ -46,6 +46,13 @@ export class Entrenador extends Model {
   @Column({ type: DataType.STRING(100), allowNull: false })
   declare contrasena: string;
 
+  @Column({ type: DataType.STRING(10), allowNull: true })
+  declare resetCode?: string;
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  declare resetCodeExpires?: Date;
+
+
   @HasOne(() => Perfil_Entrenador)
   declare perfil_Entrenador: Perfil_Entrenador[];
 

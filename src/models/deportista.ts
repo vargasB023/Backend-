@@ -83,6 +83,12 @@ export class Deportista extends Model<Deportista> {
   })
   declare parentesco_Contacto: string;
 
+  @Column({ type: DataType.STRING(10), allowNull: true })
+  declare resetCode?: string;
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  declare resetCodeExpires?: Date;
+
   @Column({ type: DataType.STRING(15), allowNull: false })
   declare telefono_Contacto: string;
 

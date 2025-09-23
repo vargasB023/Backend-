@@ -14,6 +14,12 @@ router.get('/:id',
   EvaluacionDeportiva_controller.traer_EvaluacionDeportiva_Por_Id
 );
 
+router.get("/deportista/:ID_Deportista", 
+  EvaluacionDeportiva_controller.traer_EvaluacionesPorDeportista);
+
+router.get("/entrenador/:ID_Entrenador", 
+  EvaluacionDeportiva_controller.traer_Evaluaciones_Por_Entrenador);
+
 router.post('/',
   validar_Evaluacion_Deportiva_body,
   handleInputErrors,

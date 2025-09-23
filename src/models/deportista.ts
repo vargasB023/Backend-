@@ -16,6 +16,7 @@ import h_Lesiones_Despues from "./h_Lesiones_Despues";
 import Equipo from "./equipo";
 import Rel_Deportista_Equipo from "./rel_Deportista_Equipo";
 import h_Lesiones_Antes from "./h_Lesiones_Antes";
+import Asistencia from "./asistencia";
 
 @Table({ tableName: "Deportista", timestamps: true })
 export class Deportista extends Model<Deportista> {
@@ -100,6 +101,9 @@ export class Deportista extends Model<Deportista> {
 
   @HasMany(() => h_Lesiones_Antes)
   declare h_lesiones_antes: h_Lesiones_Antes[];
+
+  @HasMany(() =>Asistencia)
+  declare asistencia: Asistencia[];
 
   @BelongsToMany(() => Entrenador, () => rel_Deportista_Entrenador)
   declare entrenador: Entrenador[];

@@ -13,6 +13,15 @@ router.get('/:id',
     handleInputErrors,
     asistencia_Controller.traer_Asistencia_Por_Id
 )
+router.get("/entrenador/:ID_Entrenador",
+     asistencia_Controller.traer_Asistencias_Por_Entrenador); 
+
+router.get("/deportista/:ID_Deportista",
+     asistencia_Controller.traer_Asistencias_Por_Deportista); 
+
+router.get("/cronograma/:id", 
+    asistencia_Controller.traer_Asistencia_Por_Cronograma);
+
 
 router.post('/',
     validar_Asistencia_Body,

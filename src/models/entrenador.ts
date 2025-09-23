@@ -52,7 +52,6 @@ export class Entrenador extends Model {
   @Column({ type: DataType.DATE, allowNull: true })
   declare resetCodeExpires?: Date;
 
-
   @HasOne(() => Perfil_Entrenador)
   declare perfil_Entrenador: Perfil_Entrenador[];
 

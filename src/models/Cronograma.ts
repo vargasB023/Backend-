@@ -35,14 +35,14 @@ class Cronograma extends Model {
   @Column({ allowNull: false })
   declare ID_Equipo: number;
 
-  @BelongsTo(() => Entrenador)
+  @BelongsTo(() => Entrenador, { as: "entrenador" })
   declare entrenador: Entrenador;
 
-  @BelongsTo(() => Equipo)
+  @BelongsTo(() => Equipo, { as: "equipo" })
   declare equipo: Equipo;
 
-  @HasMany(() =>Asistencia)
-  declare asistencia :Asistencia[];
+  @HasMany(() => Asistencia, { as: "asistencias" })
+  declare asistencias: Asistencia[];
   
 }
 

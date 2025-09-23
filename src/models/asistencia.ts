@@ -24,11 +24,11 @@ export class Asistencia extends Model {
   @Column({ type: DataType.INTEGER, allowNull: false })
   declare ID_Cronograma: number;
 
-  @BelongsTo(() => Deportista)
+  @BelongsTo(() => Deportista,)
   declare deportista: Deportista;
 
-  @BelongsTo(() => Cronograma)
-  declare cronograma:Cronograma;
+  @BelongsTo(() => Cronograma,)
+  declare cronograma: Cronograma;
 
 
 }

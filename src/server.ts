@@ -17,8 +17,8 @@ import h_Lesiones_Antes_Router from './router/h_Lesiones_Antes_Router'
 import h_Lesiones_Despues_Router from './router/h_Lesiones_Despues_Router'
 import asistencia_Router from './router/asistencia_Router'
 import evaluacion_Deportiva_Router from './router/evaluacion_Deportiva_Router'
-import evaluacion_Tecnica_Router from './router/evaluacion_Fisica_Router'
-import evaluacion_Fisica_Router from './router/evaluacion_Tecnica_Router'
+import evaluacion_Tecnica_Router from './router/evaluacion_Tecnica_Router'
+import evaluacion_Fisica_Router from './router/evaluacion_Fisica_Router'
 import cronograma_Router from './router/Cronograma_Router'
 import restablecer_contraseña from './router/auth'
 
@@ -76,9 +76,9 @@ app.use('/api/deportista',deportista_Router)
 app.use('/api/h_lesiones_antes', h_Lesiones_Antes_Router)
 app.use('/api/h_lesiones_despues', h_Lesiones_Despues_Router)
 app.use('/api/plan_de_entrenamiento',plan_de_entrenamiento_Router)
-app.use('/api/evaluacion',evaluacion_Deportiva_Router)
-app.use('/api/evaluacion_Tecnica',evaluacion_Tecnica_Router)
 app.use('/api/evaluacion_Fisica',evaluacion_Fisica_Router)
+app.use('/api/evaluacion_Tecnica',evaluacion_Tecnica_Router)
+app.use('/api/evaluacion',evaluacion_Deportiva_Router)
 app.use('/api/cronograma',cronograma_Router)
 app.use('/api/auth', restablecer_contraseña);
 

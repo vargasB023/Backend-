@@ -30,15 +30,6 @@ router.get(
   Cronograma_Controller.traer_Cronogramas_Por_Equipo
 );
 
-router.get(
-  "/reporteAsistencia/:ID_Equipo",
-  Cronograma_Controller.reporteFlexible
-);
-
-router.get("/reporteDeportista/:ID_Deportista",
-  Cronograma_Controller.reporteFlexibleDeportista
-);
-
 router.post(
   "/",
   validar_Cronograma_body,

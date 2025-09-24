@@ -3,6 +3,7 @@ import Asistencia from "../models/asistencia";
 import Cronograma from "../models/Cronograma";
 import Entrenador from "../models/entrenador";
 import Deportista from "../models/deportista";
+import Equipo from "../models/equipo";
 
 export class asistencia_Controller {
   
@@ -95,26 +96,71 @@ export class asistencia_Controller {
   }
 };
 
-  static traer_Asistencias_Por_Deportista = async (req: Request, res: Response) => {
+static traer_Asistencias_Por_Deportista = async (req: Request, res: Response) => {
   try {
     const { ID_Deportista } = req.params;
     const deportista = await Deportista.findByPk(ID_Deportista, {
-      attributes: ["ID_Deportista", "Nombre_Completo", ],
+      attributes: ["ID_Deportista", "Nombre_Completo"],
       include: [
-        {
-          model: Asistencia,
-          required: false,
-          include: [{ model: Cronograma, attributes: ["ID_Cronograma", "nombre_Evento", "fecha","ID_Equipo"] }],
-        },
-      ],
+        { model: Asistencia,attributes: ["ID_Asistencia", "estado", "observaciones"],
+          required: false,include: [
+            {
+              model: Cronograma,attributes: ["ID_Cronograma", "nombre_Evento", "fecha", "ID_Equipo"],
+            },
+          ]}]});
+    if (!deportista) {
+      return res.status(404).json({ mensaje: "No se encontró el deportista con ese ID" });
+    }
+
+    const asistenciasOrdenadas = deportista.asistencia?.sort(
+      (a: any, b: any) =>
+        new Date(b.cronograma.fecha).getTime() - new Date(a.cronograma.fecha).getTime());
+
+    res.json({
+      ...deportista.toJSON(),asistencia: asistenciasOrdenadas,
     });
-    if (!deportista) return res.status(404).json({ mensaje: "No se encontró el deportista con ese ID" });
-    res.json(deportista);
   } catch (error) {
     console.error("Error en traer_Asistencias_Por_Deportista:", error);
     res.status(500).json({ error: "Hubo un error al traer las asistencias del deportista" });
   }
 };
+
+static traer_Asistencias_Por_Equipo = async (req: Request, res: Response) => {
+  try {
+    const { ID_Equipo } = req.params;
+
+    const equipo = await Equipo.findByPk(ID_Equipo, {
+      attributes: ["ID_Equipo", "nombre_Equipo", "categoria", "liga"],
+      include: [
+        
+           {
+          model: Deportista,
+          attributes: ["ID_Deportista", "Nombre_Completo"], // 👈 forzar traer nombre
+          through: {
+            attributes: ["ID_Relacion", "fecha_Asignacion", "estado"],
+          },
+          include: [
+            {
+              model: Asistencia,
+              required: false,
+              include: [
+                {
+                  model: Cronograma,
+                  attributes: ["ID_Cronograma", "nombre_Evento", "fecha"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!equipo) return res.status(404).json({ mensaje: "No se encontró el equipo con ese ID" });
+    res.json(equipo);
+  } catch (error) {
+    console.error("Error en traer_Asistencias_Por_Equipo:", error);
+    res.status(500).json({ error: "Hubo un error al traer las asistencias del equipo" });
+  }}
 
 
   static crear_Asistencia = async (req: Request, res: Response) => {

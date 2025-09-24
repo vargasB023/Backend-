@@ -19,6 +19,9 @@ router.get("/entrenador/:ID_Entrenador",
 router.get("/deportista/:ID_Deportista",
      asistencia_Controller.traer_Asistencias_Por_Deportista); 
 
+router.get("/equipo/:ID_Equipo", 
+    asistencia_Controller.traer_Asistencias_Por_Equipo);
+
 router.get("/cronograma/:id", 
     asistencia_Controller.traer_Asistencia_Por_Cronograma);
 

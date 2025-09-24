@@ -75,36 +75,27 @@ static traer_Evaluaciones_Por_Entrenador = async (req: Request, res: Response) =
     res.status(500).json({ error: error instanceof Error ? error.message : "Error desconocido" });
   }
 };
+static traer_Deportistas_Con_Ultima_Evaluacion = async (req: Request, res: Response) => {
+  try {
+    const { id_entrenador } = req.params;
+    const evaluaciones = await Evaluacion_Deportiva.findAll({
+      where: { ID_Entrenador: id_entrenador },
+      include: [
+        { model: Deportista, attributes: ["ID_Deportista","nombre_Completo","posicion","dorsal"] },
+        { model: Entrenador, attributes: ["ID_Entrenador","nombre_Completo"] },
+        { model: Evaluacion_Fisica, as: "evaluacion_fisica" },
+        { model: Evaluacion_Tecnica, as: "evaluacion_tecnica" }
+      ],
+      order: [["fecha", "DESC"]],
+    });
 
-  static traer_Deportistas_Con_Ultima_Evaluacion = async (req: Request, res: Response) => {
-    try {
-      const { id_entrenador } = req.params;
-      const todasEvaluaciones = await Evaluacion_Deportiva.findAll({
-        where: { ID_Entrenador: id_entrenador },
-        include: [
-          { model: Deportista,attributes: ["ID_Deportista", "nombre_Completo","posicion","dorsal"] },
-          { model: Entrenador,attributes: ["ID_Entrenador", "nombre_Completo"] },
-          { model: Evaluacion_Fisica, as: "evaluacion_fisica" },
-          { model: Evaluacion_Tecnica, as: "evaluacion_tecnica" },
-          
-        ],
-        order: [["fecha", "DESC"]],
-      });
-
-      const deportistasUnicos = new Map();
-      todasEvaluaciones.forEach(evaluacion => {
-        const deportistaId = evaluacion.ID_Deportista;
-        if (!deportistasUnicos.has(deportistaId)) {
-          deportistasUnicos.set(deportistaId, evaluacion);
-        }
-      });
-
-      res.json(Array.from(deportistasUnicos.values()));
-    } catch (error) {
-      console.error("Error al traer deportistas únicos:", error);
-      res.status(500).json({ error: "Error al traer los deportistas" });
-    }
-  };
+    const unicos = [...new Map(evaluaciones.map(e => [e.ID_Deportista, e])).values()];
+    res.json(unicos);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Error al traer los deportistas" });
+  }
+};
 
 
   static traer_EvaluacionDeportiva_Por_Id = async (req: Request, res: Response) => {
